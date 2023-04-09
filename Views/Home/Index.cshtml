@@ -2,7 +2,157 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="card">
+  <div class="card-header">
+    Sale
+  </div>
+  <div class="card-body">
+  <div class="row">
+      <div class="col-sm-4">
+     
+  <div class="mb-2">
+    <label for="txtDocumentNumber" class="form-label">Document Number </label>
+    <input type="text" class="form-control form-control-sm" id="txtDocumentNumber">
+
+  </div>
+
+      </div>
+
+      <div class="col-sm-4">
+            <div class="mb-2">
+        <label for="txtBusinessName" class="form-label">Business Name</label>
+        <input type="text" class="form-control form-control-sm" id="txtBusinessName">
+        </div>
+      </div>
+  </div>
+  <hr />
+  
+  <div class="row align-items-end">
+
+      <div class="col-sm-3">
+          <div class="mb-2">
+        <label for="txtProduct" class="form-label">Product</label>
+        <input type="text" class="form-control form-control-sm" id="txtProduct">
+        </div>
+      </div>
+      <div class="col-sm-3">
+              <div class="mb-2">
+        <label for="txtPrice" class="form-label">Price</label>
+        <input type="text" class="form-control form-control-sm" id="txtPrice">
+        </div>
+      </div>
+      <div class="col-sm-3">
+              <div class="mb-2">
+        <label for="txtQuantity" class="form-label">Quantity</label>
+        <input type="text" class="form-control form-control-sm" id="txtQuantity">
+        </div>
+      </div>
+
+      <div class="col-sm-3">
+          <button class="btn btn-success mb-2 btn-sm" id="btnAgregar">ADD</button>
+          <button class="btn btn-primary mb-2 btn-sm" id="btnTerminar">Finish</button>
+      </div>
+      <div class="col-sm-3"></div>
+
+  </div>
+  <div class="row">
+      <div class="col-sm-12">
+          <table class="table table-bordered table-sm" id="tbProduct">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Product</th>
+      <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Overall</th>
+    </tr>
+  </thead>
+  <tbody>
+   
+    
+  </tbody>
+</table>
+      </div>
+  </div>
+  </div>
 </div>
+
+@section Scripts{
+
+    <script>
+
+        let products 
+
+         $("#btnAgregar").on("click", function(){
+
+             var overallProduct = parseFloat($("#txtPrice").val())  * parseFloat($("#txtQuantity").val()) 
+
+             $("#tbProduct tbody").append(
+                $("<tr>").append(
+                    $("<td>").text($("#txtProduct").val()),
+                    $("<td>").text($("#txtPrice").val()),
+                    $("<td>").text($("#txtQuantity").val()),
+                    $("<td>").text(overallProduct),
+                )
+             )
+         });
+
+
+          $("#btnTerminar").on("click", function(){
+            
+              var salesDetails = [];
+              var overall = 0;
+          
+
+              $("#tbProduct > tbody > tr").each(function(index,tr){
+
+
+                  salesDetails.push({
+                      Product: $(tr).find("td:eq(0)").text(),
+                      Price:parseFloat($(tr).find("td:eq(1)").text()),
+                      Quantity:parseInt( $(tr).find("td:eq(2)").text()) ,
+                      Overall: parseFloat($(tr).find("td:eq(3)").text())
+
+                  })
+
+                  overall = overall + parseFloat($(tr).find("td:eq(3)").text());
+
+              })
+
+        //              public int Id { get; set; }
+        //public string DocumentNumber { get; set; }
+        //public string BusinessName { get; set;}
+        //public decimal Overall { get; set;}
+
+
+        //public List<SalesDetails> SalesDetails { get; set; }
+
+              var sale = {
+                  DocumentNumber: $("#txtDocumentNumber").val(),
+                  BusinessName:$("#txtBusinessName").val(),
+                  Overall: overall,
+                  SalesDetails: salesDetails
+              }
+
+              console.log(sale);
+
+
+              $.ajax({
+                  url:"@Url.Action("SaveSale", "Home")",
+                  type:"POST",
+                  data: JSON.stringify(sale),
+                  dataType: "json",
+                  contentType: "application/json; charset=utf-8",
+                  success: function(data){
+
+                      console.log(data);
+                  }
+              })
+
+          })
+
+
+          
+
+    </script>
+   
+}
