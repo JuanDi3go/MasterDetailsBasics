@@ -1,4 +1,5 @@
-﻿using MasterDetailsBasics.Models;
+﻿using MasterDetailsBasics.Entity;
+using MasterDetailsBasics.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,13 +12,13 @@ namespace MasterDetailsBasics.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly string cadenasql;
+        private readonly MaestroDetalleBasicContext _dbcontext;
 
-
-        public HomeController(ILogger<HomeController> logger, IConfiguration config)
+        public HomeController(ILogger<HomeController> logger, IConfiguration config, MaestroDetalleBasicContext dbcontext)
         {
             _logger = logger;
             cadenasql = config.GetConnectionString("Dbconnection");
-
+            _dbcontext = dbcontext;
         }
 
         public IActionResult Index()
@@ -35,7 +36,7 @@ namespace MasterDetailsBasics.Controllers
 
                 );
 
-            XElement osaleDetail = new XElement("SalesDetail");
+            XElement osaleDetail = new XElement("SalesDetails");
 
             foreach (SalesDetail item in body.SalesDetails)
             {
@@ -67,6 +68,29 @@ namespace MasterDetailsBasics.Controllers
         }
 
 
+
+        [HttpPost]
+
+        public IActionResult SaveSaleEntityFrameWork([FromBody] SalesEntityViewModel oSalesViewModel)
+        {
+            Sale oEntity = oSalesViewModel.OSale;
+
+            oEntity.SalesDetails = oSalesViewModel.ListSalesDetails;
+            try
+            {
+                _dbcontext.Add(oEntity);
+                _dbcontext.SaveChangesAsync();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+      
+
+            return Json(new {response = true});
+        }
         public IActionResult Privacy()
         {
             return View();

@@ -135,11 +135,20 @@
 
               console.log(sale);
 
+              //Actions for use with entity
 
+              var salesEntityViewModel = {
+                  OSale: sale,
+                  ListSalesDetails: salesDetails
+              }
+
+
+              ///Url for save with XML "Url.Action("SaveSale", "Home")", data: JSON.stringify(sale),
+              ///Url for save with Entity "Url.Action("SaveSaleEntityFrameWork", "Home")",
               $.ajax({
-                  url:"@Url.Action("SaveSale", "Home")",
+                  url:"@Url.Action("SaveSaleEntityFrameWork", "Home")",
                   type:"POST",
-                  data: JSON.stringify(sale),
+                  data: JSON.stringify(salesEntityViewModel),
                   dataType: "json",
                   contentType: "application/json; charset=utf-8",
                   success: function(data){

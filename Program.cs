@@ -1,7 +1,13 @@
+using MasterDetailsBasics.Entity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+builder.Services.AddDbContext<MaestroDetalleBasicContext>(op => op.UseSqlServer(builder.Configuration.GetConnectionString("Dbconnection")));
 
 var app = builder.Build();
 
